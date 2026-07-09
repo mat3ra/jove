@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-array-index-key */
-import type { BaseUnit, Subworkflow } from "@mat3ra/wode";
+import type { Subworkflow } from "@mat3ra/wode";
+import type { UnitWithFlowchart } from "./UnitResult";
 import Box from "@mui/material/Box";
 import setClass from "classnames";
 import React from "react";
@@ -28,7 +29,7 @@ type JoveWebappMaterialSchema = Record<string, any>;
 export interface ResultsProps {
     name: string;
     subtitle: string;
-    unit: BaseUnit;
+    unit: UnitWithFlowchart;
     subworkflow: Subworkflow;
     results: JovePropertyHolder["data"][];
 }

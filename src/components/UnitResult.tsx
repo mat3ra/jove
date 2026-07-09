@@ -3,6 +3,13 @@ import { Material } from "@mat3ra/made";
 import { PropertyName } from "@mat3ra/prode";
 import { ResultsView } from "@mat3ra/prove";
 import type { BaseUnit, Subworkflow } from "@mat3ra/wode";
+
+/**
+ * Helper type — BaseUnit's mixin chain exposes `flowchartId` and `name`
+ * at runtime, but tsc cannot infer them through the mixin constructor
+ * pattern.  This intersection makes them visible to the type checker.
+ */
+export type UnitWithFlowchart = BaseUnit & { flowchartId: string; name: string };
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -51,7 +58,7 @@ interface UnitResultProps {
     name: string;
     subtitle: string;
     status: string;
-    unit: BaseUnit;
+    unit: UnitWithFlowchart;
     subworkflow: Subworkflow;
     results: JovePropertyHolder["data"][];
     job: JoveJob;
@@ -249,14 +256,14 @@ export default function UnitResult({
                                                 results={extendedRepetitionResult}
                                                 extraConfig={{
                                                     material,
-                                                    materials,
-                                                    MaterialComponent: Material,
+                                                    materials: materials as any,
+                                                    MaterialComponent: Material as any,
                                                     MaterialComponentProps: {
                                                         profile,
                                                     },
                                                     DataGridComponent,
                                                     getFileContent,
-                                                }}
+                                                } as any}
                                             />
                                         </AccordionDetails>
                                     </Accordion>
@@ -269,14 +276,14 @@ export default function UnitResult({
                         results={addFermiEnergy(results, jobProperties)}
                         extraConfig={{
                             material,
-                            materials,
-                            MaterialComponent: Material,
+                            materials: materials as any,
+                            MaterialComponent: Material as any,
                             MaterialComponentProps: {
                                 profile,
                             },
                             DataGridComponent,
                             getFileContent,
-                        }}
+                        } as any}
                     />
                 )}
             </AccordionDetails>
