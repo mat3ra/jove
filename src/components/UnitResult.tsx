@@ -219,8 +219,8 @@ export default function UnitResult({
                 {subworkflow?.hasConvergence ? (
                     <>
                         <ConvergenceChart
-                            convergenceParamName={subworkflow.convergenceParam}
-                            convergenceResultName={subworkflow.convergenceResult}
+                            convergenceParamName={subworkflow.convergenceParam ?? ""}
+                            convergenceResultName={subworkflow.convergenceResult ?? ""}
                             convergenceSeries={convergenceSeries as any}
                         />
                         {resultsByRepetition.reverse().map((repetitionResult, index) => {

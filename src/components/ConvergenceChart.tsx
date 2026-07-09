@@ -19,7 +19,7 @@ function ConvergenceChart({
     convergenceResultName,
     convergenceSeries,
 }: Props) {
-    function tooltipFormatter() {
+    function tooltipFormatter(this: { point: { param: string; y: number } }) {
         // note 'this' below refers to Highcharts tooltip scope
         // eslint-disable-next-line func-names
         return (
