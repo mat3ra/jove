@@ -1,6 +1,12 @@
 /**
- * Minimal stub for Meteor and /imports/* paths in standalone mode.
- * All exported values are no-ops so that tree-shaking removes them entirely
- * from the standalone build.
+ * Minimal stub for @mat3ra/ade, @mat3ra/mode, swig, mathjs and other
+ * packages that are not available in standalone browser mode.
+ * Exports no-op classes to satisfy named imports.
  */
-export default {};
+
+export class Application {}
+export class Template {}
+export class Model {}
+export class Method {}
+
+export default { Application, Template, Model, Method };

@@ -55,6 +55,41 @@ export default defineConfig({
                 find: /^@mat3ra\/job-designer$/,
                 replacement: path.resolve(__dirname, "src/standalone/stubs/job-designer.js"),
             },
+            // @mat3ra/ade — pulled in transitively by @mat3ra/wode; stub it out.
+            {
+                find: /^@mat3ra\/ade(\/.*)?$/,
+                replacement: path.resolve(__dirname, "src/standalone/stubs/meteor.js"),
+            },
+            // @mat3ra/made — has Node.js-only init code; use named-export stub in standalone.
+            {
+                find: /^@mat3ra\/made(\/.*)?$/,
+                replacement: path.resolve(__dirname, "src/standalone/stubs/made-stub.js"),
+            },
+            // @mat3ra/code — provides InMemoryEntity base class; use stub with minimal class hierarchy.
+            {
+                find: /^@mat3ra\/code(\/.*)?$/,
+                replacement: path.resolve(__dirname, "src/standalone/stubs/code-stub.js"),
+            },
+            // @mat3ra/ide — exports computedEntityMixin used by @mat3ra/wode workflows.
+            {
+                find: /^@mat3ra\/ide(\/.*)?$/,
+                replacement: path.resolve(__dirname, "src/standalone/stubs/ide-stub.js"),
+            },
+            // @mat3ra/mode — pulled in transitively; stub it out.
+            {
+                find: /^@mat3ra\/mode(\/.*)?$/,
+                replacement: path.resolve(__dirname, "src/standalone/stubs/meteor.js"),
+            },
+            // swig — server-side template engine; stub it out.
+            {
+                find: "swig",
+                replacement: path.resolve(__dirname, "src/standalone/stubs/meteor.js"),
+            },
+            // mathjs — stub if not needed in standalone.
+            {
+                find: "mathjs",
+                replacement: path.resolve(__dirname, "src/standalone/stubs/meteor.js"),
+            },
             // Stub for moment-duration-format (used by ive/ave compute components).
             {
                 find: "moment-duration-format",
