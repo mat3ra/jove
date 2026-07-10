@@ -75,10 +75,10 @@ export default defineConfig({
                 find: /^@mat3ra\/ide(\/.*)?$/,
                 replacement: path.resolve(__dirname, "src/standalone/stubs/ide-stub.js"),
             },
-            // @mat3ra/mode — pulled in transitively; stub it out.
+            // @mat3ra/mode — exports ModelFactory needed by @mat3ra/wode Subworkflow.
             {
                 find: /^@mat3ra\/mode(\/.*)?$/,
-                replacement: path.resolve(__dirname, "src/standalone/stubs/meteor.js"),
+                replacement: path.resolve(__dirname, "src/standalone/stubs/mode-stub.js"),
             },
             // swig — server-side template engine; stub it out.
             {
