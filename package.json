@@ -1,0 +1,77 @@
+{
+    "name": "@mat3ra/jove",
+    "version": "0.0.0",
+    "description": "Job Viewer components",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mat3ra/jove.git"
+    },
+    "bugs": {
+        "url": "https://github.com/mat3ra/jove/issues"
+    },
+    "homepage": "https://github.com/mat3ra/jove",
+    "main": "dist/exports.js",
+    "types": "dist/exports.d.ts",
+    "files": [
+        "/dist",
+        "/src",
+        "tsconfig.json"
+    ],
+    "scripts": {
+        "dev": "vite --port 3008",
+        "build": "tsc && npm run copy-css",
+        "build:standalone": "vite build",
+        "copy-css": "mkdir -p dist/stylesheets && cp src/stylesheets/* dist/stylesheets/ 2>/dev/null || true",
+        "transpile": "tsc",
+        "test": "node --import tsx --test tests/*.tests.ts",
+        "lint": "eslint src tests && prettier --check src tests"
+    },
+    "dependencies": {
+        "@mat3ra/prove": "*"
+    },
+    "peerDependencies": {
+        "@exabyte-io/cove.js": "*",
+        "@mat3ra/esse": "*",
+        "@mat3ra/jode": "*",
+        "@mat3ra/made": "*",
+        "@mat3ra/prode": "*",
+        "@mat3ra/standata": "*",
+        "@mat3ra/wode": "*",
+        "react": "^17.0.0",
+        "react-dom": "^17.0.0"
+    },
+    "license": "Apache-2.0",
+    "devDependencies": {
+        "@emotion/babel-plugin": "^11.11.0",
+        "@emotion/react": "^11.11.0",
+        "@emotion/styled": "^11.11.0",
+        "@exabyte-io/cove.js": "2026.7.9-1",
+        "@exabyte-io/wave.js": "2026.6.30-0",
+        "@mat3ra/esse": "2026.6.16-0",
+        "@mat3ra/jode": "2026.7.9-1",
+        "@mat3ra/made": "2026.7.8-0",
+        "@mat3ra/prode": "2026.6.12-0",
+        "@mat3ra/standata": "2026.6.12-1",
+        "@mat3ra/tsconfig": "^2024.6.3-0",
+        "@mat3ra/wode": "2026.7.9-0",
+        "@mui/icons-material": "^5.11.9",
+        "@mui/lab": "^5.0.0-alpha.120",
+        "@mui/material": "^5.11.9",
+        "@mui/styles": "^5.11.9",
+        "@types/lodash": "^4.14.202",
+        "@types/node": "^20.11.30",
+        "@types/react": "^17.0.2",
+        "@types/react-dom": "^17.0.2",
+        "@vitejs/plugin-react": "^4.3.4",
+        "classnames": "^2.3.2",
+        "lodash": "^4.17.4",
+        "moment": "^2.29.4",
+        "react": "^17.0.0",
+        "react-dom": "^17.0.0",
+        "tsx": "^4.22.4",
+        "typescript": "^5.6.6",
+        "underscore.string": "^3.3.4",
+        "vite": "^6.0.7",
+        "vite-plugin-node-polyfills": "^0.25.0"
+    }
+}

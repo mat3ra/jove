@@ -1,0 +1,6 @@
+{
+    "extends": "@mat3ra/tsconfig/tsconfig-react-jsx.json",
+    "exclude": [
+        "src/standalone/**/*"
+    ]
+}

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+build/
+*.tgz
+*.log
+.DS_Store
+*.tsbuildinfo
+.nyc_output/
+coverage/
