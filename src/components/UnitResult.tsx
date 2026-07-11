@@ -1,4 +1,5 @@
 import IconByName from "@exabyte-io/cove.js/dist/mui/components/icon/IconByName";
+import { ENTITY_ICONS } from "@exabyte-io/cove.js/dist/mui/components/icon/entityIcons";
 import { Material } from "@mat3ra/made";
 import { PropertyName } from "@mat3ra/prode";
 import { ResultsView } from "@mat3ra/prove";
@@ -20,21 +21,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import s from "underscore.string";
 
 import ConvergenceChart from "./ConvergenceChart";
-
-// ---------------------------------------------------------------------------
-// Local constant replacing ENTITY_ICONS from /imports/core/entity-icons.
-// The installed version of cove.js (2026.5.28-0) does not yet ship entityIcons;
-// Vite resolves this via alias to the reference build, but tsc sees the installed
-// version.  Defining the constant locally avoids the missing-module error while
-// keeping the same values used at runtime.
-// ---------------------------------------------------------------------------
-
-const ENTITY_ICONS = {
-    workflow: "entities.workflow",
-    unit: "entities.unit",
-    subworkflow: "entities.subworkflow",
-    material: "entities.material",
-} as const;
 
 // ---------------------------------------------------------------------------
 // Local type definitions replacing webapp-specific imports

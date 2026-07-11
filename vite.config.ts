@@ -9,6 +9,15 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
  * This is ONLY used for local development (`npm run dev`) and
  * the standalone bundle (`npm run build:standalone`).
  * The library build (tsc) ignores this file entirely.
+ *
+ * Kept in sync with the canonical @mat3ra/ave / @mat3ra/ive / @mat3ra/wove
+ * configs: minimal dedupe, no optimizeDeps overrides, and NO stubs for the
+ * @mat3ra/* data packages. The standalone demo renders jove's own components
+ * (ResultsTab) plus lightweight package-native tab viewers — it does NOT embed
+ * @mat3ra/job-designer, so none of that package's Meteor/simple-react-form/
+ * reactflow chain is pulled in. The webapp injects the full job-designer.
+ * The only genuine stub is moment-duration-format (a server-oriented module
+ * ave's chain also shims).
  */
 export default defineConfig({
     base: "/jove/",
@@ -24,17 +33,23 @@ export default defineConfig({
     define: {
         __dirname: JSON.stringify(__dirname),
     },
+    optimizeDeps: {
+        include: ["moment", "moment-duration-format", "@mat3ra/jode"],
+    },
+    server: {
+        port: 3008,
+    },
     resolve: {
-        dedupe: [
-            "react",
-            "react-dom",
-            "@emotion/react",
-            "@emotion/styled",
-            "@mui/material",
-            "@mui/styles",
-            "@mat3ra/made",
-        ],
+        dedupe: ["@mat3ra/esse", "@mui/material", "@mui/styles", "@emotion/react", "@emotion/styled"],
         alias: [
+            {
+                find: /^moment$/,
+                replacement: path.resolve(__dirname, "node_modules/moment/moment.js"),
+            },
+            {
+                find: /^vite-plugin-node-polyfills\/shims\/(.*)$/,
+                replacement: path.resolve(__dirname, "node_modules/vite-plugin-node-polyfills/shims/$1"),
+            },
             // Self-referencing alias so the standalone demo can import from
             // "@mat3ra/jove" and resolve to the local source tree.
             {
@@ -45,62 +60,14 @@ export default defineConfig({
                 find: /^@mat3ra\/jove\/dist\/(.*)$/,
                 replacement: path.resolve(__dirname, "src/$1"),
             },
-            // @mat3ra/prode — resolve subpath imports to installed dist.
+            // @mat3ra/prode — its package.json `exports` map only exposes "." and
+            // "./types". Resolve any deep subpath imports straight to the real dist
+            // files. NOT a stub — real code.
             {
                 find: /^@mat3ra\/prode\/dist\/(.*)$/,
                 replacement: path.resolve(__dirname, "node_modules/@mat3ra/prode/dist/$1"),
             },
-            // @mat3ra/job-designer — stub until the package is published on npm.
-            {
-                find: /^@mat3ra\/job-designer$/,
-                replacement: path.resolve(__dirname, "src/standalone/stubs/job-designer.js"),
-            },
-            // @mat3ra/ade — pulled in transitively by @mat3ra/wode; stub it out.
-            {
-                find: /^@mat3ra\/ade(\/.*)?$/,
-                replacement: path.resolve(__dirname, "src/standalone/stubs/meteor.js"),
-            },
-            // @mat3ra/made — has Node.js-only init code; use named-export stub in standalone.
-            {
-                find: /^@mat3ra\/made(\/.*)?$/,
-                replacement: path.resolve(__dirname, "src/standalone/stubs/made-stub.js"),
-            },
-            // @mat3ra/code — provides InMemoryEntity base class; use stub with minimal class hierarchy.
-            {
-                find: /^@mat3ra\/code(\/.*)?$/,
-                replacement: path.resolve(__dirname, "src/standalone/stubs/code-stub.js"),
-            },
-            // @mat3ra/ide — exports computedEntityMixin used by @mat3ra/wode workflows.
-            {
-                find: /^@mat3ra\/ide(\/.*)?$/,
-                replacement: path.resolve(__dirname, "src/standalone/stubs/ide-stub.js"),
-            },
-            // @mat3ra/mode — exports ModelFactory needed by @mat3ra/wode Subworkflow.
-            {
-                find: /^@mat3ra\/mode(\/.*)?$/,
-                replacement: path.resolve(__dirname, "src/standalone/stubs/mode-stub.js"),
-            },
-            // swig — server-side template engine; stub it out.
-            {
-                find: "swig",
-                replacement: path.resolve(__dirname, "src/standalone/stubs/meteor.js"),
-            },
-            // mathjs — stub if not needed in standalone.
-            {
-                find: "mathjs",
-                replacement: path.resolve(__dirname, "src/standalone/stubs/meteor.js"),
-            },
-            // Stub for moment-duration-format (used by ive/ave compute components).
-            {
-                find: "moment-duration-format",
-                replacement: path.resolve(__dirname, "src/standalone/stubs/moment-duration-format.js"),
-            },
-            // use-sync-external-store extension fix (MUI relies on named export).
-            {
-                find: "use-sync-external-store/shim/with-selector.js",
-                replacement: "use-sync-external-store/shim/with-selector",
-            },
-            // @mui subpath CJS → ESM fixes.
+            // MUI ESM fixes.
             {
                 find: /^@mui\/system\/(?!esm\/)(.*)$/,
                 replacement: path.resolve(__dirname, "node_modules/@mui/system/esm/$1"),
@@ -125,8 +92,5 @@ export default defineConfig({
                 assetFileNames: "[name]-[hash].[ext]",
             },
         },
-    },
-    server: {
-        port: 3008,
     },
 });
