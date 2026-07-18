@@ -1,5 +1,5 @@
-import IconByName from "@mat3ra/cove.js/dist/mui/components/icon/IconByName";
-import { ENTITY_ICONS } from "@mat3ra/cove.js/dist/mui/components/icon/entityIcons";
+import IconByName from "@mat3ra/cove/dist/mui/components/icon/IconByName";
+import { ENTITY_ICONS } from "@mat3ra/cove/dist/mui/components/icon/entityIcons";
 import { Material } from "@mat3ra/made";
 import { PropertyName } from "@mat3ra/prode";
 import { ResultsView } from "@mat3ra/prove";
