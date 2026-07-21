@@ -22,6 +22,11 @@ import s from "underscore.string";
 
 import ConvergenceChart from "./ConvergenceChart";
 
+/** Package-native fallback when no host-injected material viewer is provided. */
+function DefaultMaterialComponent({ material: materialProp }: { material?: InstanceType<typeof Material> }) {
+    return <Box component="span">{materialProp?.name ?? materialProp?.formula ?? "Material"}</Box>;
+}
+
 // ---------------------------------------------------------------------------
 // Local type definitions replacing webapp-specific imports
 // ---------------------------------------------------------------------------
@@ -56,6 +61,13 @@ interface UnitResultProps {
     EntityNameComponent?: React.ComponentType<{ entity?: any }>;
     /** Optional MUI DataGrid component. */
     DataGridComponent?: React.ComponentType<any>;
+    /**
+     * Optional host-injected material viewer (e.g. webapp's Material component). Falls back to a
+     * plain name display. Must NOT default to the @mat3ra/made Material data class itself - it
+     * isn't a React component and rendering it as one throws "Class constructor Material cannot
+     * be invoked without 'new'".
+     */
+    MaterialComponent?: React.ComponentType<any>;
     /** Optional file utility helpers. */
     fileUtils?: {
         downloadAndProcessFile: (
@@ -89,6 +101,7 @@ export default function UnitResult({
     fetchMaterials,
     EntityNameComponent,
     DataGridComponent,
+    MaterialComponent = DefaultMaterialComponent,
     fileUtils,
     calculateFermiEnergy,
 }: UnitResultProps) {
@@ -243,7 +256,7 @@ export default function UnitResult({
                                                 extraConfig={{
                                                     material,
                                                     materials: materials as any,
-                                                    MaterialComponent: Material as any,
+                                                    MaterialComponent,
                                                     MaterialComponentProps: {
                                                         profile,
                                                     },
@@ -263,7 +276,7 @@ export default function UnitResult({
                         extraConfig={{
                             material,
                             materials: materials as any,
-                            MaterialComponent: Material as any,
+                            MaterialComponent,
                             MaterialComponentProps: {
                                 profile,
                             },

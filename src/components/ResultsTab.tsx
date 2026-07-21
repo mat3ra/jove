@@ -46,6 +46,7 @@ interface ResultsTabProps {
     fetchMaterials: (ids: string[]) => Promise<JoveWebappMaterialSchema[]>;
     EntityNameComponent?: React.ComponentType<{ entity?: any }>;
     DataGridComponent?: React.ComponentType<any>;
+    MaterialComponent?: React.ComponentType<any>;
     fileUtils?: {
         downloadAndProcessFile: (
             accountId: string,
@@ -75,6 +76,7 @@ export default function ResultsTab({
     fetchMaterials,
     EntityNameComponent,
     DataGridComponent,
+    MaterialComponent,
     fileUtils,
     calculateFermiEnergy,
 }: ResultsTabProps) {
@@ -98,6 +100,7 @@ export default function ResultsTab({
                             fetchMaterials={fetchMaterials}
                             EntityNameComponent={EntityNameComponent}
                             DataGridComponent={DataGridComponent}
+                            MaterialComponent={MaterialComponent}
                             fileUtils={fileUtils}
                             calculateFermiEnergy={calculateFermiEnergy}
                         />

@@ -39,6 +39,13 @@ interface UnitResultProps {
     }>;
     /** Optional MUI DataGrid component. */
     DataGridComponent?: React.ComponentType<any>;
+    /**
+     * Optional host-injected material viewer (e.g. webapp's Material component). Falls back to a
+     * plain name display. Must NOT default to the @mat3ra/made Material data class itself - it
+     * isn't a React component and rendering it as one throws "Class constructor Material cannot
+     * be invoked without 'new'".
+     */
+    MaterialComponent?: React.ComponentType<any>;
     /** Optional file utility helpers. */
     fileUtils?: {
         downloadAndProcessFile: (accountId: string, fileConfig: any, onSuccess: (contents: string, fileMetadata: any) => void, handler: (files: any[], onLoad: any) => void) => void;
@@ -48,5 +55,5 @@ interface UnitResultProps {
     /** Optional Fermi energy calculator. */
     calculateFermiEnergy?: (subworkflow: Subworkflow, firstResult: any, jobProperties: JovePropertyHolder[]) => number | undefined;
 }
-export default function UnitResult({ subworkflow, unit, name, status, subtitle, results, job, profile, jobProperties, material, fetchMaterials, EntityNameComponent, DataGridComponent, fileUtils, calculateFermiEnergy, }: UnitResultProps): React.JSX.Element;
+export default function UnitResult({ subworkflow, unit, name, status, subtitle, results, job, profile, jobProperties, material, fetchMaterials, EntityNameComponent, DataGridComponent, MaterialComponent, fileUtils, calculateFermiEnergy, }: UnitResultProps): React.JSX.Element;
 export {};
