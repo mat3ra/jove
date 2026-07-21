@@ -13,7 +13,12 @@ import groupBy from "lodash/groupBy";
 import { useEffect, useMemo, useState } from "react";
 import s from "underscore.string";
 import ConvergenceChart from "./ConvergenceChart";
-export default function UnitResult({ subworkflow, unit, name, status, subtitle, results, job, profile, jobProperties, material, fetchMaterials, EntityNameComponent, DataGridComponent, fileUtils, calculateFermiEnergy, }) {
+/** Package-native fallback when no host-injected material viewer is provided. */
+function DefaultMaterialComponent({ material: materialProp }) {
+    var _a, _b;
+    return _jsx(Box, { component: "span", children: (_b = (_a = materialProp === null || materialProp === void 0 ? void 0 : materialProp.name) !== null && _a !== void 0 ? _a : materialProp === null || materialProp === void 0 ? void 0 : materialProp.formula) !== null && _b !== void 0 ? _b : "Material" });
+}
+export default function UnitResult({ subworkflow, unit, name, status, subtitle, results, job, profile, jobProperties, material, fetchMaterials, EntityNameComponent, DataGridComponent, MaterialComponent = DefaultMaterialComponent, fileUtils, calculateFermiEnergy, }) {
     var _a, _b;
     const [expanded, setExpanded] = useState(true);
     const [activePanel, setActivePanel] = useState(0);
@@ -87,7 +92,7 @@ export default function UnitResult({ subworkflow, unit, name, status, subtitle, 
                                                 }, children: _jsx(Box, { component: "span", children: entityName }) }) }), _jsx(Divider, {}), _jsx(AccordionDetails, { children: _jsx(ResultsView, { results: extendedRepetitionResult, extraConfig: {
                                                     material,
                                                     materials: materials,
-                                                    MaterialComponent: Material,
+                                                    MaterialComponent,
                                                     MaterialComponentProps: {
                                                         profile,
                                                     },
@@ -97,7 +102,7 @@ export default function UnitResult({ subworkflow, unit, name, status, subtitle, 
                         })] })) : (_jsx(ResultsView, { results: addFermiEnergy(results, jobProperties), extraConfig: {
                         material,
                         materials: materials,
-                        MaterialComponent: Material,
+                        MaterialComponent,
                         MaterialComponentProps: {
                             profile,
                         },

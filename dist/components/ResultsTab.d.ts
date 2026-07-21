@@ -33,6 +33,7 @@ interface ResultsTabProps {
         entity?: any;
     }>;
     DataGridComponent?: React.ComponentType<any>;
+    MaterialComponent?: React.ComponentType<any>;
     fileUtils?: {
         downloadAndProcessFile: (accountId: string, fileConfig: any, onSuccess: (contents: string, fileMetadata: any) => void, handler: (files: any[], onLoad: any) => void) => void;
         handleGetSignedURL: (files: any[], onLoad: any) => void;
@@ -40,5 +41,5 @@ interface ResultsTabProps {
     };
     calculateFermiEnergy?: (subworkflow: Subworkflow, firstResult: any, jobProperties: JovePropertyHolder[]) => number | undefined;
 }
-export default function ResultsTab({ className, id, role, job, profile, material, resultsProperties, jobProperties, fetchMaterials, EntityNameComponent, DataGridComponent, fileUtils, calculateFermiEnergy, }: ResultsTabProps): React.JSX.Element;
+export default function ResultsTab({ className, id, role, job, profile, material, resultsProperties, jobProperties, fetchMaterials, EntityNameComponent, DataGridComponent, MaterialComponent, fileUtils, calculateFermiEnergy, }: ResultsTabProps): React.JSX.Element;
 export {};
