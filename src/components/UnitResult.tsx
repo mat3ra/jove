@@ -192,9 +192,7 @@ export default function UnitResult({
                         <EntityNameComponent entity={material as any} />
                     ) : (
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                            {ENTITY_ICONS?.unit && (
-                                <Box component="span">{ENTITY_ICONS.unit}</Box>
-                            )}
+                            {ENTITY_ICONS?.unit && <IconByName name={ENTITY_ICONS.unit} />}
                             <Box component="span">{name}</Box>
                             {subtitle && (
                                 <Box component="span" sx={{ color: "text.secondary", fontSize: "0.85em" }}>
