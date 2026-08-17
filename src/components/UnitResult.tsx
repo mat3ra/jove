@@ -23,7 +23,11 @@ import s from "underscore.string";
 import ConvergenceChart from "./ConvergenceChart";
 
 /** Package-native fallback when no host-injected material viewer is provided. */
-function DefaultMaterialComponent({ material: materialProp }: { material?: InstanceType<typeof Material> }) {
+function DefaultMaterialComponent({
+    material: materialProp,
+}: {
+    material?: InstanceType<typeof Material>;
+}) {
     return <Box component="span">{materialProp?.name ?? materialProp?.formula ?? "Material"}</Box>;
 }
 
@@ -185,7 +189,8 @@ export default function UnitResult({
             className="unit-results"
             data-tid={s.slugify(`${subworkflow?.name}-${unit?.name}`)}
             expanded={expanded}
-            onChange={() => setExpanded(!expanded)}>
+            onChange={() => setExpanded(!expanded)}
+        >
             <AccordionSummary expandIcon={<IconByName name="shapes.arrow.down" />}>
                 <Box sx={{ backgroundColor: "background.paper", p: 2 }}>
                     {EntityNameComponent ? (
@@ -195,7 +200,10 @@ export default function UnitResult({
                             {ENTITY_ICONS?.unit && <IconByName name={ENTITY_ICONS.unit} />}
                             <Box component="span">{name}</Box>
                             {subtitle && (
-                                <Box component="span" sx={{ color: "text.secondary", fontSize: "0.85em" }}>
+                                <Box
+                                    component="span"
+                                    sx={{ color: "text.secondary", fontSize: "0.85em" }}
+                                >
                                     {subtitle}
                                 </Box>
                             )}
@@ -203,7 +211,8 @@ export default function UnitResult({
                                 <Box
                                     component="span"
                                     sx={{ color: "text.secondary", fontSize: "0.75em" }}
-                                    onClick={() => setExpanded(!expanded)}>
+                                    onClick={() => setExpanded(!expanded)}
+                                >
                                     ({status})
                                 </Box>
                             )}
@@ -236,14 +245,17 @@ export default function UnitResult({
                                         expanded={isActivePanel}
                                         onChange={() => {
                                             setActivePanel(isActivePanel ? -1 : index);
-                                        }}>
+                                        }}
+                                    >
                                         <AccordionSummary
-                                            expandIcon={<IconByName name="shapes.arrow.down" />}>
+                                            expandIcon={<IconByName name="shapes.arrow.down" />}
+                                        >
                                             <Box
                                                 sx={{
                                                     backgroundColor: "background.paper",
                                                     p: 2,
-                                                }}>
+                                                }}
+                                            >
                                                 <Box component="span">{entityName}</Box>
                                             </Box>
                                         </AccordionSummary>
@@ -251,16 +263,18 @@ export default function UnitResult({
                                         <AccordionDetails>
                                             <ResultsView
                                                 results={extendedRepetitionResult}
-                                                extraConfig={{
-                                                    material,
-                                                    materials: materials as any,
-                                                    MaterialComponent,
-                                                    MaterialComponentProps: {
-                                                        profile,
-                                                    },
-                                                    DataGridComponent,
-                                                    getFileContent,
-                                                } as any}
+                                                extraConfig={
+                                                    {
+                                                        material,
+                                                        materials: materials as any,
+                                                        MaterialComponent,
+                                                        MaterialComponentProps: {
+                                                            profile,
+                                                        },
+                                                        DataGridComponent,
+                                                        getFileContent,
+                                                    } as any
+                                                }
                                             />
                                         </AccordionDetails>
                                     </Accordion>
@@ -271,16 +285,18 @@ export default function UnitResult({
                 ) : (
                     <ResultsView
                         results={addFermiEnergy(results, jobProperties)}
-                        extraConfig={{
-                            material,
-                            materials: materials as any,
-                            MaterialComponent,
-                            MaterialComponentProps: {
-                                profile,
-                            },
-                            DataGridComponent,
-                            getFileContent,
-                        } as any}
+                        extraConfig={
+                            {
+                                material,
+                                materials: materials as any,
+                                MaterialComponent,
+                                MaterialComponentProps: {
+                                    profile,
+                                },
+                                DataGridComponent,
+                                getFileContent,
+                            } as any
+                        }
                     />
                 )}
             </AccordionDetails>

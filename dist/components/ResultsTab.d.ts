@@ -1,6 +1,7 @@
 import type { Subworkflow } from "@mat3ra/wode";
 import type { UnitWithFlowchart } from "./UnitResult";
 import React from "react";
+import type { MonitorableUnit } from "../runMonitor";
 /** Replaces FulfilledProfileState from /imports/client/store/storeTypes */
 type JoveProfileState = Record<string, any>;
 /** Replaces CorePropertyHolder from /imports/core/entity/CorePropertyHolder */
@@ -40,6 +41,19 @@ interface ResultsTabProps {
         handleGetSignedUrlAsCSV: (files: any[], onLoad: any) => void;
     };
     calculateFermiEnergy?: (subworkflow: Subworkflow, firstResult: any, jobProperties: JovePropertyHolder[]) => number | undefined;
+    /**
+     * Shows what the job is doing above the results, from the units' own status
+     * tracks. Opt-in per host, like the rest of the guided designer.
+     */
+    showRunMonitor?: boolean;
+    /** The job's units, in workflow order. Only read when `showRunMonitor`. */
+    units?: MonitorableUnit[];
+    /** Tail of the job's log, fetched by the host. */
+    logText?: string;
+    /** False when the deployment has no log feed, as opposed to an empty log. */
+    hasLogSource?: boolean;
+    /** Unix seconds; durations of running units are measured against it. */
+    now?: number;
 }
-export default function ResultsTab({ className, id, role, job, profile, material, resultsProperties, jobProperties, fetchMaterials, EntityNameComponent, DataGridComponent, MaterialComponent, fileUtils, calculateFermiEnergy, }: ResultsTabProps): React.JSX.Element;
+export default function ResultsTab({ className, id, role, job, profile, material, resultsProperties, jobProperties, fetchMaterials, EntityNameComponent, DataGridComponent, MaterialComponent, fileUtils, calculateFermiEnergy, showRunMonitor, units, logText, hasLogSource, now, }: ResultsTabProps): React.JSX.Element;
 export {};

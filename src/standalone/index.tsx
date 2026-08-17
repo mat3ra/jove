@@ -1,5 +1,5 @@
 import "./preloads";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -106,7 +106,7 @@ function createMockResultsProperties(
 
     return subworkflowInstances.slice(0, 2).map((subworkflow: any, index: number) => {
         const unitName = subworkflow?.name ?? `Subworkflow ${index + 1}`;
-        const unitInstance = (subworkflow?.units)?.[0] ?? {};
+        const unitInstance = subworkflow?.units?.[0] ?? {};
         const mockUnit = { ...unitInstance, statusCls: "success" };
 
         const results = [
@@ -137,17 +137,20 @@ function StandaloneMaterialViewer({ material }: { material: any }) {
                 {material?.name || material?.formula || "Material Details"}
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.6, mb: 2 }}>
-                Standalone viewer showing raw material JSON. (In production webapp, this renders a full 3D interactive viewer).
+                Standalone viewer showing raw material JSON. (In production webapp, this renders a
+                full 3D interactive viewer).
             </Typography>
-            <pre style={{
-                background: "rgba(255,255,255,0.03)",
-                padding: "16px",
-                borderRadius: "8px",
-                border: "1px solid rgba(255,255,255,0.08)",
-                overflowX: "auto",
-                fontFamily: "monospace",
-                fontSize: "0.85rem",
-            }}>
+            <pre
+                style={{
+                    background: "rgba(255,255,255,0.03)",
+                    padding: "16px",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    overflowX: "auto",
+                    fontFamily: "monospace",
+                    fontSize: "0.85rem",
+                }}
+            >
                 {JSON.stringify(raw, null, 2)}
             </pre>
         </Box>
@@ -172,7 +175,10 @@ function StandaloneFilesExplorer() {
             </Typography>
             <List dense disablePadding>
                 {PREBAKED_JOB_FILES.map((file) => (
-                    <ListItem key={file.name} sx={{ py: 1, borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                    <ListItem
+                        key={file.name}
+                        sx={{ py: 1, borderBottom: "1px solid rgba(255,255,255,0.04)" }}
+                    >
                         <ListItemIcon sx={{ minWidth: 36 }}>
                             <InsertDriveFileIcon fontSize="small" sx={{ opacity: 0.6 }} />
                         </ListItemIcon>
@@ -194,9 +200,82 @@ const fetchMaterials = async () => [];
 // App
 // ---------------------------------------------------------------------------
 
+/** Seconds each unit takes in the simulation, in order. */
+const SIMULATED_UNIT_SECONDS = [12, 30, 18, 45, 22];
+
+/**
+ * A run that actually progresses, so the monitor can be reviewed without a live
+ * job. Units start in order, each finishing after its own dwell time, and the
+ * log grows while they do.
+ *
+ * The webapp will feed the real thing through the same props; only the source
+ * is simulated, not the shapes.
+ */
+function useSimulatedRun(workflow: any, isEnabled: boolean) {
+    const [elapsed, setElapsed] = useState(0);
+
+    useEffect(() => {
+        if (!isEnabled) return undefined;
+
+        const timer = setInterval(() => setElapsed((seconds) => seconds + 1), 1000);
+
+        return () => clearInterval(timer);
+    }, [isEnabled]);
+
+    const unitNames: string[] = useMemo(() => {
+        const subworkflows = workflow?.subworkflows ?? [];
+
+        return subworkflows.flatMap((subworkflow: any) =>
+            (subworkflow?.units ?? []).map((unit: any) => unit?.name ?? "unit"),
+        );
+    }, [workflow]);
+
+    return useMemo(() => {
+        const start = 0;
+        let cursor = start;
+        let isSettled = true;
+
+        const units = unitNames.map((name, index) => {
+            const duration = SIMULATED_UNIT_SECONDS[index % SIMULATED_UNIT_SECONDS.length];
+            const startedAt = cursor;
+            const finishedAt = cursor + duration;
+            cursor = finishedAt;
+
+            const statusTrack = [{ status: "idle", trackedAt: 0 }];
+            if (elapsed >= startedAt) statusTrack.push({ status: "active", trackedAt: startedAt });
+            if (elapsed >= finishedAt) {
+                statusTrack.push({ status: "finished", trackedAt: finishedAt });
+            } else {
+                isSettled = false;
+            }
+
+            return { name, flowchartId: `sim-${index}`, statusTrack };
+        });
+
+        const finishedCount = units.filter((unit) =>
+            unit.statusTrack.some((entry) => entry.status === "finished"),
+        ).length;
+
+        const logText = [
+            "[0000] job accepted, allocating nodes",
+            ...unitNames
+                .slice(0, Math.min(finishedCount + 1, unitNames.length))
+                .flatMap((name, index) => [
+                    `[${String(index * 4 + 1).padStart(4, "0")}] ${name}: started`,
+                    ...(index < finishedCount
+                        ? [`[${String(index * 4 + 3).padStart(4, "0")}] ${name}: done`]
+                        : [`[${String(index * 4 + 2).padStart(4, "0")}] ${name}: iterating…`]),
+                ]),
+        ].join("\n");
+
+        return { units, logText, now: elapsed, isSettled: isSettled && units.length > 0 };
+    }, [unitNames, elapsed]);
+}
+
 function App() {
     const [workflowIndex, setWorkflowIndex] = useState(0);
     const [materialIndex, setMaterialIndex] = useState(0);
+    const [isRunSimulated, setIsRunSimulated] = useState(true);
 
     const selectedWorkflowJson = allWorkflowJsons[workflowIndex] ?? allWorkflowJsons[0];
     const selectedMaterialJson = allMaterialJsons[materialIndex] ?? allMaterialJsons[0];
@@ -216,7 +295,9 @@ function App() {
     const materialInstance = useMemo(() => {
         const materialWithId = {
             ...selectedMaterialJson,
-            _id: selectedMaterialJson._id ?? `standalone-mat-${selectedMaterialJson.formula ?? "Si"}`,
+            _id:
+                selectedMaterialJson._id ??
+                `standalone-mat-${selectedMaterialJson.formula ?? "Si"}`,
         };
         try {
             return new Material(materialWithId);
@@ -248,13 +329,23 @@ function App() {
     }, [wodeWorkflow, materialInstance, selectedWorkflowJson]);
 
     const [tab, setTab] = useState<"materials" | "results" | "files">("results");
+    // A simulated run, so the monitor can be reviewed without a live job. The
+    // webapp will feed the real thing; the shapes are the same.
+    const {
+        units: simulatedUnits,
+        logText,
+        now: simulatedNow,
+        isSettled,
+    } = useSimulatedRun(wodeWorkflow, isRunSimulated);
 
     if (!wodeWorkflow || !job) {
         return (
             <ThemeProvider theme={demoTheme}>
                 <CssBaseline />
                 <Box sx={{ p: 4, color: "error.main" }}>
-                    <Typography variant="h6">Failed to construct workflow/job from selected data.</Typography>
+                    <Typography variant="h6">
+                        Failed to construct workflow/job from selected data.
+                    </Typography>
                     <Typography variant="body2" sx={{ mt: 1, opacity: 0.7 }}>
                         Check the console for details.
                     </Typography>
@@ -278,10 +369,12 @@ function App() {
                         borderBottom: "1px solid rgba(255,255,255,0.08)",
                         bgcolor: "background.paper",
                         flexShrink: 0,
-                    }}>
+                    }}
+                >
                     <Typography
                         variant="h6"
-                        sx={{ fontWeight: 700, color: "primary.main", mr: 2, flexShrink: 0 }}>
+                        sx={{ fontWeight: 700, color: "primary.main", mr: 2, flexShrink: 0 }}
+                    >
                         jove — Job Viewer
                     </Typography>
                     <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
@@ -291,9 +384,8 @@ function App() {
                                 labelId="workflow-select-label"
                                 value={workflowIndex}
                                 label="Workflow"
-                                onChange={(event) =>
-                                    setWorkflowIndex(Number(event.target.value))
-                                }>
+                                onChange={(event) => setWorkflowIndex(Number(event.target.value))}
+                            >
                                 {allWorkflowJsons.map((wf: any, i: number) => (
                                     <MenuItem key={i} value={i}>
                                         {wf?.name ?? `Workflow ${i + 1}`}
@@ -308,9 +400,8 @@ function App() {
                                 labelId="material-select-label"
                                 value={materialIndex}
                                 label="Material"
-                                onChange={(event) =>
-                                    setMaterialIndex(Number(event.target.value))
-                                }>
+                                onChange={(event) => setMaterialIndex(Number(event.target.value))}
+                            >
                                 {allMaterialJsons.map((mat: any, i: number) => (
                                     <MenuItem key={i} value={i}>
                                         {mat?.name ?? mat?.formula ?? `Material ${i + 1}`}
@@ -318,6 +409,18 @@ function App() {
                                 ))}
                             </Select>
                         </FormControl>
+                        <Chip
+                            label={
+                                isRunSimulated
+                                    ? `Run monitor: ${isSettled ? "finished" : "running"}`
+                                    : "Run monitor: off"
+                            }
+                            variant={isRunSimulated ? "filled" : "outlined"}
+                            color="primary"
+                            size="small"
+                            onClick={() => setIsRunSimulated((on) => !on)}
+                            data-tid="run-monitor-toggle"
+                        />
                         <Chip
                             label={`${allWorkflowJsons.length} workflows · ${allMaterialJsons.length} materials`}
                             variant="outlined"
@@ -331,14 +434,17 @@ function App() {
                 <Tabs
                     value={tab}
                     onChange={(_e, value) => setTab(value)}
-                    sx={{ px: 2, borderBottom: "1px solid rgba(255,255,255,0.08)", flexShrink: 0 }}>
+                    sx={{ px: 2, borderBottom: "1px solid rgba(255,255,255,0.08)", flexShrink: 0 }}
+                >
                     <Tab label="Materials" value="materials" />
                     <Tab label="Results" value="results" />
                     <Tab label="Files" value="files" />
                 </Tabs>
 
                 <Box sx={{ flex: 1, overflow: "auto" }}>
-                    {tab === "materials" && <StandaloneMaterialViewer material={materialInstance} />}
+                    {tab === "materials" && (
+                        <StandaloneMaterialViewer material={materialInstance} />
+                    )}
                     {tab === "results" && (
                         <ResultsTab
                             className=""
@@ -350,6 +456,10 @@ function App() {
                             resultsProperties={resultsProperties}
                             jobProperties={[]}
                             fetchMaterials={fetchMaterials}
+                            showRunMonitor={isRunSimulated}
+                            units={simulatedUnits}
+                            logText={logText}
+                            now={simulatedNow}
                         />
                     )}
                     {tab === "files" && <StandaloneFilesExplorer />}
