@@ -54,5 +54,8 @@ test("dist/exports.d.ts declares ResultsTab type export", () => {
 
 test("dist/exports.d.ts declares ConvergenceChart type export", () => {
     const content = fs.readFileSync(exportsDtsPath, "utf-8");
-    assert.ok(content.includes("ConvergenceChart"), "exports.d.ts should reference ConvergenceChart");
+    assert.ok(
+        content.includes("ConvergenceChart"),
+        "exports.d.ts should reference ConvergenceChart",
+    );
 });

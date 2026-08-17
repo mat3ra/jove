@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 import s from "underscore.string";
 import ConvergenceChart from "./ConvergenceChart";
 /** Package-native fallback when no host-injected material viewer is provided. */
-function DefaultMaterialComponent({ material: materialProp }) {
+function DefaultMaterialComponent({ material: materialProp, }) {
     var _a, _b;
     return _jsx(Box, { component: "span", children: (_b = (_a = materialProp === null || materialProp === void 0 ? void 0 : materialProp.name) !== null && _a !== void 0 ? _a : materialProp === null || materialProp === void 0 ? void 0 : materialProp.formula) !== null && _b !== void 0 ? _b : "Material" });
 }

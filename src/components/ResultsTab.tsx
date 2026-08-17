@@ -6,6 +6,8 @@ import Box from "@mui/material/Box";
 import setClass from "classnames";
 import React from "react";
 
+import type { MonitorableUnit } from "../runMonitor";
+import RunMonitor from "./RunMonitor";
 import UnitResult from "./UnitResult";
 
 // ---------------------------------------------------------------------------
@@ -62,6 +64,19 @@ interface ResultsTabProps {
         firstResult: any,
         jobProperties: JovePropertyHolder[],
     ) => number | undefined;
+    /**
+     * Shows what the job is doing above the results, from the units' own status
+     * tracks. Opt-in per host, like the rest of the guided designer.
+     */
+    showRunMonitor?: boolean;
+    /** The job's units, in workflow order. Only read when `showRunMonitor`. */
+    units?: MonitorableUnit[];
+    /** Tail of the job's log, fetched by the host. */
+    logText?: string;
+    /** False when the deployment has no log feed, as opposed to an empty log. */
+    hasLogSource?: boolean;
+    /** Unix seconds; durations of running units are measured against it. */
+    now?: number;
 }
 
 export default function ResultsTab({
@@ -79,9 +94,27 @@ export default function ResultsTab({
     MaterialComponent,
     fileUtils,
     calculateFermiEnergy,
+    showRunMonitor = false,
+    units,
+    logText,
+    hasLogSource,
+    now,
 }: ResultsTabProps) {
     return (
         <Box className={setClass(className)} id={id} role={role} p={2}>
+            {showRunMonitor ? (
+                <Box mb={3}>
+                    <RunMonitor
+                        units={units}
+                        logText={logText}
+                        hasLogSource={hasLogSource}
+                        // The clock is the caller's to own: a component that read it
+                        // itself would report a different elapsed time on every
+                        // unrelated re-render.
+                        now={now ?? Math.floor(Date.now() / 1000)}
+                    />
+                </Box>
+            ) : null}
             <div className="mini-charts">
                 {resultsProperties.map((item, index) => {
                     return (
