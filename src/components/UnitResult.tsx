@@ -123,7 +123,7 @@ export default function UnitResult({
     useEffect(() => {
         fetchMaterials(materialIds)
             .then((fetchedMaterials) => {
-                setMaterials(fetchedMaterials.map((m) => new Material(m)));
+                setMaterials(fetchedMaterials.map((m) => new Material(m as any)));
             })
             .catch(console.error);
     }, [fetchMaterials, materialIds]);
