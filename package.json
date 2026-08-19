@@ -58,6 +58,7 @@
         "@mat3ra/made": "2026.8.18-0",
         "@mat3ra/mode": "2026.8.18-0",
         "@mat3ra/prode": "2026.8.18-0",
+        "@mat3ra/prove": "2026.8.19-0",
         "@mat3ra/standata": "2026.8.18-0",
         "@mat3ra/tsconfig": "^2024.6.3-0",
         "@mat3ra/utils": "2026.8.18-1",
