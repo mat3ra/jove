@@ -56,3 +56,11 @@ test("dist/exports.d.ts declares ConvergenceChart type export", () => {
     const content = fs.readFileSync(exportsDtsPath, "utf-8");
     assert.ok(content.includes("ConvergenceChart"), "exports.d.ts should reference ConvergenceChart");
 });
+
+test("ResultsProps lets a card carry its own entity (per-sample results)", () => {
+    const resultsTabDts = fs.readFileSync(
+        path.join(distDirectory, "components", "ResultsTab.d.ts"),
+        "utf8",
+    );
+    assert.match(resultsTabDts, /entity\?: unknown;/, "ResultsProps.entity should be declared");
+});
