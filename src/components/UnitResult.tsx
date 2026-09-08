@@ -56,6 +56,8 @@ interface UnitResultProps {
     profile: JoveProfileState;
     jobProperties: JovePropertyHolder[];
     material: InstanceType<typeof Material>;
+    /** The entity this card belongs to; rendered by EntityNameComponent in place of the tab-wide material. */
+    entity?: unknown;
     fetchMaterials: (ids: string[]) => Promise<JoveWebappMaterialSchema[]>;
     /** Optional component to render entity names. Falls back to a plain span. */
     EntityNameComponent?: React.ComponentType<{ entity?: any }>;
@@ -98,6 +100,7 @@ export default function UnitResult({
     profile,
     jobProperties,
     material,
+    entity,
     fetchMaterials,
     EntityNameComponent,
     DataGridComponent,
@@ -189,7 +192,7 @@ export default function UnitResult({
             <AccordionSummary expandIcon={<IconByName name="shapes.arrow.down" />}>
                 <Box sx={{ backgroundColor: "background.paper", p: 2 }}>
                     {EntityNameComponent ? (
-                        <EntityNameComponent entity={material as any} />
+                        <EntityNameComponent entity={(entity ?? material) as any} />
                     ) : (
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                             {ENTITY_ICONS?.unit && <IconByName name={ENTITY_ICONS.unit} />}

@@ -32,6 +32,8 @@ export interface ResultsProps {
     unit: UnitWithFlowchart;
     subworkflow: Subworkflow;
     results: JovePropertyHolder["data"][];
+    /** The entity this card's results belong to, when it is not the tab-wide material (e.g. one sample of a set). */
+    entity?: unknown;
 }
 
 interface ResultsTabProps {
@@ -93,6 +95,7 @@ export default function ResultsTab({
                             unit={item.unit}
                             subworkflow={item.subworkflow}
                             material={material}
+                            entity={item.entity}
                             results={item.results}
                             profile={profile}
                             job={job}
